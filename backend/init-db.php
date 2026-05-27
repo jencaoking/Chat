@@ -5,8 +5,14 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 try {
+    $dbHost = $_ENV['DB_HOST'];
+    $dbPort = $_ENV['DB_PORT'] ?? 3306;
+    if (strpos($dbHost, ':') !== false) {
+        list($dbHost, $dbPort) = explode(':', $dbHost);
+    }
+    
     $pdo = new PDO(
-        'mysql:host=' . str_replace(':3312', '', $_ENV['DB_HOST']) . ';port=3312;charset=utf8mb4',
+        'mysql:host=' . $dbHost . ';port=' . $dbPort . ';charset=utf8mb4',
         $_ENV['DB_USER'],
         $_ENV['DB_PASS'],
         [
