@@ -230,9 +230,12 @@
 
 <script setup>
 import { ref, computed, onMounted, markRaw } from 'vue'
+import { useRouter } from 'vue-router'
 import { Users, MessageSquare, Circle, Search, LogOut, MessageCircle, Trash2, AlertCircle } from 'lucide-vue-next'
 import { logout } from '../utils/auth'
 import axios from '../utils/axios'
+
+const router = useRouter()
 
 const tabs = [
   { id: 'users', name: '用户管理', icon: markRaw(Users) },
@@ -337,12 +340,16 @@ const confirmDelete = async () => {
 }
 
 const handleLogout = async () => {
-  await logout()
-  window.location.href = '/login'
+  try {
+    await logout()
+  } catch (e) {
+    console.error('Logout error:', e)
+  }
+  router.push('/login')
 }
 
 const goToChat = () => {
-  window.location.href = '/chat'
+  router.push('/chat')
 }
 
 onMounted(() => {

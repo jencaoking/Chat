@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS conversations (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (last_message_id) REFERENCES messages(id) ON DELETE SET NULL,
     UNIQUE KEY conversation_unique (user1_id, user2_id)
 );
 
@@ -40,6 +39,9 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+ALTER TABLE conversations 
+ADD FOREIGN KEY (last_message_id) REFERENCES messages(id) ON DELETE SET NULL;
 
 INSERT INTO users (username, email, password, role, status) VALUES 
 ('admin', 'admin@chat.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'online');

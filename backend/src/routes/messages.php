@@ -7,6 +7,7 @@ return function (App $app) {
     $messageController = new MessageController();
     $authMiddleware = new AuthMiddleware();
     
+    $app->get('/api/users', [$messageController, 'getUsers'])->add($authMiddleware);
     $app->get('/api/conversations', [$messageController, 'getConversations'])->add($authMiddleware);
     $app->get('/api/messages/{id}', [$messageController, 'getMessages'])->add($authMiddleware);
     $app->post('/api/messages', [$messageController, 'sendMessage'])->add($authMiddleware);

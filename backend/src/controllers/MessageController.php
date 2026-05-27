@@ -7,6 +7,27 @@ use App\Models\User;
 use Slim\Psr7\Response;
 
 class MessageController {
+    public function getUsers($request, $response, $args) {
+        $user = $request->getAttribute('user');
+        
+        $users = User::where('id', '!=', $user->id)
+            ->orderBy('username', 'asc')
+            ->get();
+        
+        $result = [];
+        foreach ($users as $u) {
+            $result[] = [
+                'id' => $u->id,
+                'username' => $u->username,
+                'email' => $u->email,
+                'status' => $u->status
+            ];
+        }
+        
+        $response->getBody()->write(json_encode(['success' => true, 'data' => $result]));
+        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+    }
+    
     public function getConversations($request, $response, $args) {
         $user = $request->getAttribute('user');
         
@@ -80,6 +101,11 @@ class MessageController {
         
         if (!isset($data['to_id'], $data['content'])) {
             $response->getBody()->write(json_encode(['error' => 'Missing required fields']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+        
+        if ($data['to_id'] == $user->id) {
+            $response->getBody()->write(json_encode(['error' => 'Cannot send message to yourself']));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
         
