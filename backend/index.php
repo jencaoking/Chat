@@ -8,10 +8,17 @@ require __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+$dbHost = $_ENV['DB_HOST'];
+$dbPort = 3306;
+if (strpos($dbHost, ':') !== false) {
+    list($dbHost, $dbPort) = explode(':', $dbHost);
+}
+
 $capsule = new Capsule;
 $capsule->addConnection([
     'driver'    => 'mysql',
-    'host'      => $_ENV['DB_HOST'],
+    'host'      => $dbHost,
+    'port'      => $dbPort,
     'database'  => $_ENV['DB_NAME'],
     'username'  => $_ENV['DB_USER'],
     'password'  => $_ENV['DB_PASS'],
@@ -36,8 +43,8 @@ $app->add(function ($request, $handler) {
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
-require __DIR__ . '/src/routes/auth.php';
-require __DIR__ . '/src/routes/messages.php';
-require __DIR__ . '/src/routes/admin.php';
+(require __DIR__ . '/src/routes/auth.php')($app);
+(require __DIR__ . '/src/routes/messages.php')($app);
+(require __DIR__ . '/src/routes/admin.php')($app);
 
 $app->run();

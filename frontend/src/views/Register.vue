@@ -119,7 +119,11 @@ const handleRegister = async () => {
       error.value = response.error || '注册失败'
     }
   } catch (e) {
-    error.value = '网络错误，请稍后重试'
+    if (e.response?.data?.error) {
+      error.value = e.response.data.error
+    } else {
+      error.value = '网络错误，请稍后重试'
+    }
   } finally {
     loading.value = false
   }
