@@ -92,9 +92,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { UserPlus, User, Mail, Lock, Loader2 } from 'lucide-vue-next'
 import { register } from '../utils/auth'
 
+const router = useRouter()
 const username = ref('')
 const email = ref('')
 const password = ref('')
@@ -114,7 +116,7 @@ const handleRegister = async () => {
   try {
     const response = await register(username.value, email.value, password.value)
     if (response.success) {
-      window.location.href = '/chat'
+      router.push('/chat')
     } else {
       error.value = response.error || '注册失败'
     }

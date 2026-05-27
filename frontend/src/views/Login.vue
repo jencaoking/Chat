@@ -70,9 +70,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { MessageCircle, Mail, Lock, Loader2 } from 'lucide-vue-next'
-import { login } from '../utils/auth'
+import { login, isAdmin } from '../utils/auth'
 
+const router = useRouter()
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -85,7 +87,11 @@ const handleLogin = async () => {
   try {
     const response = await login(email.value, password.value)
     if (response.success) {
-      window.location.href = '/chat'
+      if (isAdmin()) {
+        router.push('/admin')
+      } else {
+        router.push('/chat')
+      }
     } else {
       error.value = response.error || '登录失败'
     }
